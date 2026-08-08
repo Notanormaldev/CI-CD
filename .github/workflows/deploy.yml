@@ -29,8 +29,8 @@ jobs:
 
       - name: Deploy to Render
         run: |
-          # Option A — trigger a Render deploy hook
-          curl -X POST process.env.RENDER_DEPLOY_HOOK_URL
+          # Trigger the Render deploy hook from the GitHub secret
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
           # Option B — SSH into your VPS and pull + restart
           # ssh user@server "cd /app && git pull && pm2 restart all"
