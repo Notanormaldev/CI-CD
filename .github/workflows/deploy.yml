@@ -1,0 +1,36 @@
+name: CD — Test & Deploy
+
+on:
+  push:
+    branches: [main]    # only runs when code lands on main
+
+jobs:
+
+  # ── Job 1: Run tests ─────────────────────────────
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm install
+      - run: npm run test
+
+  # ── Job 2: Deploy (only if tests passed) ─────────
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: test              # ← waits for test job to succeed
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Render
+        run: |
+          # Option A — trigger a Render deploy hook
+          curl -X POST process.env.RENDER_DEPLOY_HOOK_URL
+
+          # Option B — SSH into your VPS and pull + restart
+          # ssh user@server "cd /app && git pull && pm2 restart all"
