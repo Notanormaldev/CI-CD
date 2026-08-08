@@ -28,9 +28,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Deploy to Render
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL secret is not set"
+            exit 1
+          fi
+
           # Trigger the Render deploy hook from the GitHub secret
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          curl -X POST "$RENDER_DEPLOY_HOOK_URL"
 
           # Option B — SSH into your VPS and pull + restart
           # ssh user@server "cd /app && git pull && pm2 restart all"
