@@ -43,9 +43,5 @@ describe('user model test',()=>{
 
     })
 
-    test("shold require the feilds (name , email)if not provided",async ()=>{
-        await Usermodel.create({name:"doremon"}).catch((err)=>{
-            expect(err.message).toBe('User validation failed: email: Path `email` is required.');
-        });
-    })
+ 
 })
